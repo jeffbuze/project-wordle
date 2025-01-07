@@ -1,12 +1,21 @@
 import React from 'react';
+import { NUM_OF_GUESSES_ALLOWED } from '../../constants';
 
-function GuessInput({ guessList, setGuessList }) {
+
+function GuessInput({ guessList, setGuessList, gameStatus, answer, setGameStatus}) {
   const [guess, setGuess] = React.useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log({ guess });
-    setGuessList([...guessList, guess]);
+    const nextGuessList = [...guessList, guess];
+    setGuessList(nextGuessList);
+
+    if (guess === answer) {
+      setGameStatus('won');
+    } else if (guess !== answer && nextGuessList.length >= NUM_OF_GUESSES_ALLOWED) {
+      setGameStatus('lost');
+    }
     setGuess('');
   };
 
@@ -17,6 +26,7 @@ function GuessInput({ guessList, setGuessList }) {
         id="guess-input"
         type="text"
         required
+        disabled={gameStatus !== 'running'}
         pattern="[A-Z]{5}"
         maxLength={5}
         title="Please enter exactly 5 uppercase letters"
